@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Smile, Paperclip, Phone, Video, MoreVertical } from 'lucide-react';
+import { Send, Smile, Paperclip, Phone, Video, MoreVertical, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Contact, Message } from '../types/chat';
@@ -10,7 +10,9 @@ import TypingIndicator from './TypingIndicator';
 interface ChatAreaProps {
   contact: Contact | null;
   messages: Message[];
-  onSendMessage: (content: string) => void;
+  onSendMessage: (content: string, replyTo?: Message) => void;
+  onReaction?: (messageId: number, emoji: string) => void;
+  onStarMessage?: (messageId: number) => void;
   sidebarCollapsed: boolean;
 }
 
@@ -18,10 +20,13 @@ const ChatArea: React.FC<ChatAreaProps> = ({
   contact, 
   messages, 
   onSendMessage,
+  onReaction,
+  onStarMessage,
   sidebarCollapsed 
 }) => {
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [replyingTo, setReplyingTo] = useState<Message | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -45,8 +50,9 @@ const ChatArea: React.FC<ChatAreaProps> = ({
 
   const handleSend = () => {
     if (inputValue.trim() && contact) {
-      onSendMessage(inputValue.trim());
+      onSendMessage(inputValue.trim(), replyingTo || undefined);
       setInputValue('');
+      setReplyingTo(null);
     }
   };
 
@@ -55,6 +61,10 @@ const ChatArea: React.FC<ChatAreaProps> = ({
       e.preventDefault();
       handleSend();
     }
+  };
+
+  const handleReply = (message: Message) => {
+    setReplyingTo(message);
   };
 
   if (!contact) {
@@ -68,7 +78,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
           <div className="w-24 h-24 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full mx-auto mb-4 flex items-center justify-center">
             <span className="text-3xl">💬</span>
           </div>
-          <h2 className="text-xl font-semibold text-foreground mb-2">Welcome to ChatApp</h2>
+          <h2 className="text-xl font-semibold text-foreground mb-2">Welcome to WhatsApp Web</h2>
           <p className="text-muted-foreground">Select a conversation to start chatting</p>
         </div>
       </div>
@@ -95,7 +105,8 @@ const ChatArea: React.FC<ChatAreaProps> = ({
           <div>
             <h3 className="font-semibold text-foreground">{contact.name}</h3>
             <p className="text-sm text-muted-foreground">
-              {contact.online ? 'Active now' : 'Last seen recently'}
+              {contact.online ? 'Online' : 'Last seen recently'}
+              {contact.status && ` • ${contact.status}`}
             </p>
           </div>
         </div>
@@ -116,11 +127,41 @@ const ChatArea: React.FC<ChatAreaProps> = ({
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message) => (
-          <MessageBubble key={message.id} message={message} />
+          <MessageBubble 
+            key={message.id} 
+            message={message}
+            onReact={onReaction}
+            onStar={onStarMessage}
+            onReply={handleReply}
+          />
         ))}
         {isTyping && <TypingIndicator />}
         <div ref={messagesEndRef} />
       </div>
+
+      {/* Reply Preview */}
+      {replyingTo && (
+        <div className="bg-accent/50 border-t border-border px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <div className="text-xs font-medium text-primary">
+                Replying to {replyingTo.sender === 'user' ? 'yourself' : contact.name}
+              </div>
+              <div className="text-sm text-muted-foreground truncate">
+                {replyingTo.content}
+              </div>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6"
+              onClick={() => setReplyingTo(null)}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Message Input */}
       <div className="bg-card border-t border-border p-4">

@@ -1,7 +1,10 @@
 
-import React from 'react';
+import React, { useState, useMemo } from 'react';
+import { Archive, Pin, MoreVertical } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { Contact } from '../types/chat';
 import ContactItem from './ContactItem';
+import SearchBar from './SearchBar';
 
 interface SidebarProps {
   contacts: Contact[];
@@ -18,6 +21,32 @@ const Sidebar: React.FC<SidebarProps> = ({
   collapsed,
   isMobile
 }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showArchived, setShowArchived] = useState(false);
+
+  const filteredContacts = useMemo(() => {
+    let filtered = contacts.filter(contact => 
+      contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      contact.lastMessage.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    if (showArchived) {
+      filtered = filtered.filter(contact => contact.isArchived);
+    } else {
+      filtered = filtered.filter(contact => !contact.isArchived);
+    }
+
+    // Sort by pinned first, then by timestamp
+    return filtered.sort((a, b) => {
+      if (a.isPinned && !b.isPinned) return -1;
+      if (!a.isPinned && b.isPinned) return 1;
+      return 0;
+    });
+  }, [contacts, searchTerm, showArchived]);
+
+  const pinnedCount = contacts.filter(c => c.isPinned && !c.isArchived).length;
+  const archivedCount = contacts.filter(c => c.isArchived).length;
+
   return (
     <>
       {/* Mobile overlay */}
@@ -38,12 +67,53 @@ const Sidebar: React.FC<SidebarProps> = ({
       >
         <div className="flex flex-col h-full">
           <div className="p-4 border-b border-border">
-            <h2 className="text-lg font-semibold text-foreground">Messages</h2>
-            <p className="text-sm text-muted-foreground">{contacts.length} conversations</p>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-lg font-semibold text-foreground">Chats</h2>
+              <Button variant="ghost" size="icon" className="hover:bg-accent">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </div>
+            
+            <div className="flex gap-2 text-xs">
+              <button
+                onClick={() => setShowArchived(false)}
+                className={`px-3 py-1 rounded-full transition-colors ${
+                  !showArchived ? 'bg-primary text-primary-foreground' : 'bg-accent text-accent-foreground hover:bg-accent/80'
+                }`}
+              >
+                All ({contacts.filter(c => !c.isArchived).length})
+              </button>
+              {archivedCount > 0 && (
+                <button
+                  onClick={() => setShowArchived(true)}
+                  className={`flex items-center gap-1 px-3 py-1 rounded-full transition-colors ${
+                    showArchived ? 'bg-primary text-primary-foreground' : 'bg-accent text-accent-foreground hover:bg-accent/80'
+                  }`}
+                >
+                  <Archive className="h-3 w-3" />
+                  Archived ({archivedCount})
+                </button>
+              )}
+            </div>
           </div>
           
+          <SearchBar 
+            value={searchTerm}
+            onChange={setSearchTerm}
+            placeholder={showArchived ? "Search archived chats..." : "Search chats..."}
+          />
+          
+          {pinnedCount > 0 && !showArchived && (
+            <div className="px-4 py-2 border-b border-border bg-accent/30">
+              <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                <Pin className="h-3 w-3" />
+                Pinned ({pinnedCount})
+              </div>
+            </div>
+          )}
+          
           <div className="flex-1 overflow-y-auto">
-            {contacts.map((contact) => (
+            {filteredContacts.map((contact) => (
               <ContactItem
                 key={contact.id}
                 contact={contact}
@@ -51,6 +121,14 @@ const Sidebar: React.FC<SidebarProps> = ({
                 onClick={() => onContactSelect(contact)}
               />
             ))}
+            
+            {filteredContacts.length === 0 && (
+              <div className="p-4 text-center text-muted-foreground">
+                <div className="text-sm">
+                  {searchTerm ? 'No chats found' : showArchived ? 'No archived chats' : 'No chats yet'}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

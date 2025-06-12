@@ -6,6 +6,13 @@ export interface Contact {
   lastMessage: string;
   timestamp: string;
   online: boolean;
+  isGroup?: boolean;
+  isPinned?: boolean;
+  isArchived?: boolean;
+  isMuted?: boolean;
+  unreadCount?: number;
+  status?: string;
+  members?: Contact[];
 }
 
 export interface Message {
@@ -14,4 +21,17 @@ export interface Message {
   sender: 'user' | 'bot';
   timestamp: Date;
   status: 'sent' | 'delivered' | 'read';
+  isForwarded?: boolean;
+  replyTo?: Message;
+  reactions?: { [emoji: string]: string[] };
+  isStarred?: boolean;
+  type?: 'text' | 'image' | 'voice' | 'file';
+  mediaUrl?: string;
+  duration?: number; // for voice messages
+}
+
+export interface ChatSettings {
+  theme: 'light' | 'dark';
+  background: string;
+  notifications: boolean;
 }

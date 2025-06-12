@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { ThemeProvider } from '../contexts/ThemeContext';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import ChatArea from '../components/ChatArea';
@@ -10,13 +11,61 @@ const Index = () => {
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Dummy contacts data
+  // Enhanced dummy contacts data with new features
   const contacts: Contact[] = [
-    { id: 1, name: 'Sarah Wilson', avatar: '👩‍💼', lastMessage: 'Hey, how are you?', timestamp: '2 min ago', online: true },
-    { id: 2, name: 'John Doe', avatar: '👨‍💻', lastMessage: 'Thanks for the update!', timestamp: '1 hour ago', online: false },
-    { id: 3, name: 'Emily Chen', avatar: '👩‍🎨', lastMessage: 'Looking forward to meeting', timestamp: '3 hours ago', online: true },
-    { id: 4, name: 'Michael Brown', avatar: '👨‍🔬', lastMessage: 'Perfect! See you then', timestamp: '1 day ago', online: false },
-    { id: 5, name: 'Lisa Garcia', avatar: '👩‍🏫', lastMessage: 'That sounds great!', timestamp: '2 days ago', online: true },
+    { 
+      id: 1, 
+      name: 'Sarah Wilson', 
+      avatar: '👩‍💼', 
+      lastMessage: 'Hey, how are you?', 
+      timestamp: '2 min ago', 
+      online: true,
+      isPinned: true,
+      unreadCount: 3,
+      status: 'Available'
+    },
+    { 
+      id: 2, 
+      name: 'Tech Team', 
+      avatar: '👨‍💻', 
+      lastMessage: 'Thanks for the update!', 
+      timestamp: '1 hour ago', 
+      online: false,
+      isGroup: true,
+      unreadCount: 12,
+      members: [
+        { id: 21, name: 'John', avatar: '👨‍💻', lastMessage: '', timestamp: '', online: true },
+        { id: 22, name: 'Emma', avatar: '👩‍💻', lastMessage: '', timestamp: '', online: false }
+      ]
+    },
+    { 
+      id: 3, 
+      name: 'Emily Chen', 
+      avatar: '👩‍🎨', 
+      lastMessage: 'Looking forward to meeting', 
+      timestamp: '3 hours ago', 
+      online: true,
+      isMuted: true,
+      status: 'In a meeting'
+    },
+    { 
+      id: 4, 
+      name: 'Michael Brown', 
+      avatar: '👨‍🔬', 
+      lastMessage: 'Perfect! See you then', 
+      timestamp: '1 day ago', 
+      online: false,
+      isPinned: true
+    },
+    { 
+      id: 5, 
+      name: 'Lisa Garcia', 
+      avatar: '👩‍🏫', 
+      lastMessage: 'That sounds great!', 
+      timestamp: '2 days ago', 
+      online: true,
+      isArchived: true
+    },
   ];
 
   const [chatMessages, setChatMessages] = useState<Record<number, Message[]>>({});
@@ -41,7 +90,7 @@ const Index = () => {
     }
   };
 
-  const handleSendMessage = (content: string) => {
+  const handleSendMessage = (content: string, replyTo?: Message) => {
     if (!selectedContact) return;
 
     const newMessage: Message = {
@@ -49,7 +98,8 @@ const Index = () => {
       content,
       sender: 'user',
       timestamp: new Date(),
-      status: 'sent'
+      status: 'sent',
+      replyTo
     };
 
     setChatMessages(prev => ({
@@ -95,29 +145,76 @@ const Index = () => {
     }, 2000 + Math.random() * 3000);
   };
 
+  const handleReaction = (messageId: number, emoji: string) => {
+    if (!selectedContact) return;
+    
+    setChatMessages(prev => ({
+      ...prev,
+      [selectedContact.id]: prev[selectedContact.id]?.map(msg => {
+        if (msg.id === messageId) {
+          const reactions = { ...msg.reactions } || {};
+          if (!reactions[emoji]) {
+            reactions[emoji] = [];
+          }
+          
+          // Toggle user reaction
+          const userIndex = reactions[emoji].indexOf('user');
+          if (userIndex > -1) {
+            reactions[emoji].splice(userIndex, 1);
+            if (reactions[emoji].length === 0) {
+              delete reactions[emoji];
+            }
+          } else {
+            reactions[emoji].push('user');
+          }
+          
+          return { ...msg, reactions };
+        }
+        return msg;
+      }) || []
+    }));
+  };
+
+  const handleStarMessage = (messageId: number) => {
+    if (!selectedContact) return;
+    
+    setChatMessages(prev => ({
+      ...prev,
+      [selectedContact.id]: prev[selectedContact.id]?.map(msg => 
+        msg.id === messageId ? { ...msg, isStarred: !msg.isStarred } : msg
+      ) || []
+    }));
+  };
+
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
   };
 
+  const totalUnreadCount = contacts.reduce((sum, contact) => sum + (contact.unreadCount || 0), 0);
+
   return (
-    <div className="h-screen flex flex-col bg-background">
-      <Navbar onToggleSidebar={toggleSidebar} />
-      <div className="flex flex-1 overflow-hidden">
-        <Sidebar
-          contacts={contacts}
-          selectedContact={selectedContact}
-          onContactSelect={handleContactSelect}
-          collapsed={sidebarCollapsed}
-          isMobile={isMobile}
-        />
-        <ChatArea
-          contact={selectedContact}
-          messages={chatMessages[selectedContact?.id || 0] || []}
-          onSendMessage={handleSendMessage}
-          sidebarCollapsed={sidebarCollapsed}
-        />
+    <ThemeProvider>
+      <div className="h-screen flex flex-col bg-background">
+        <Navbar onToggleSidebar={toggleSidebar} unreadCount={totalUnreadCount} />
+        <div className="flex flex-1 overflow-hidden">
+          <Sidebar
+            contacts={contacts}
+            selectedContact={selectedContact}
+            onContactSelect={handleContactSelect}
+            collapsed={sidebarCollapsed}
+            isMobile={isMobile}
+          />
+          <ChatArea
+            contact={selectedContact}
+            messages={chatMessages[selectedContact?.id || 0] || []}
+            onSendMessage={handleSendMessage}
+            onReaction={handleReaction}
+            onStarMessage={handleStarMessage}
+            sidebarCollapsed={sidebarCollapsed}
+          />
+        </div>
       </div>
-    </div>
+    </ThemeProvider>
   );
 };
 
