@@ -79,7 +79,7 @@ const ModernChatArea: React.FC<ModernChatAreaProps> = ({
     <div className={`
       flex-1 flex flex-col bg-gradient-to-b from-white/90 to-gray-50/90 dark:from-gray-900/90 dark:to-gray-800/90 backdrop-blur-sm
       transition-all duration-300
-      ${sidebarCollapsed ? 'ml-0' : 'ml-0 md:ml-80'}
+      ${sidebarCollapsed ? 'ml-0' : 'ml-0 md:ml-0'}
     `}>
       {/* Enhanced Chat Header */}
       <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-border/50 p-4 flex items-center justify-between mt-16 shadow-sm">
