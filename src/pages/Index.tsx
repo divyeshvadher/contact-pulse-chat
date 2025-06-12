@@ -111,9 +111,9 @@ const Index = () => {
     setTimeout(() => {
       setChatMessages(prev => ({
         ...prev,
-        [selectedContact.id]: prev[selectedContact.id]?.map(msg => 
+        [selectedContact.id]: (prev[selectedContact.id] || []).map(msg => 
           msg.id === newMessage.id ? { ...msg, status: 'delivered' } : msg
-        ) || []
+        )
       }));
     }, 1000);
 
@@ -150,7 +150,7 @@ const Index = () => {
     
     setChatMessages(prev => ({
       ...prev,
-      [selectedContact.id]: prev[selectedContact.id]?.map(msg => {
+      [selectedContact.id]: (prev[selectedContact.id] || []).map(msg => {
         if (msg.id === messageId) {
           const reactions = { ...msg.reactions } || {};
           if (!reactions[emoji]) {
@@ -171,7 +171,7 @@ const Index = () => {
           return { ...msg, reactions };
         }
         return msg;
-      }) || []
+      })
     }));
   };
 
@@ -180,9 +180,9 @@ const Index = () => {
     
     setChatMessages(prev => ({
       ...prev,
-      [selectedContact.id]: prev[selectedContact.id]?.map(msg => 
+      [selectedContact.id]: (prev[selectedContact.id] || []).map(msg => 
         msg.id === messageId ? { ...msg, isStarred: !msg.isStarred } : msg
-      ) || []
+      )
     }));
   };
 
