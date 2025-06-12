@@ -83,11 +83,12 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
         
         <div
           className={`
-            px-4 py-2 rounded-2xl shadow-sm relative
+            px-4 py-2.5 rounded-2xl shadow-sm relative
             ${isUser 
-              ? 'bg-primary text-primary-foreground rounded-br-md' 
-              : 'bg-card border border-border rounded-bl-md'
+              ? 'bg-primary text-primary-foreground rounded-br-none ml-auto' 
+              : 'bg-muted/50 hover:bg-muted/60 transition-colors rounded-bl-none mr-auto'
             }
+            hover:shadow-md transition-shadow duration-200
           `}
         >
           {message.type === 'voice' ? (
