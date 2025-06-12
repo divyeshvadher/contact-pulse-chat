@@ -152,7 +152,7 @@ const Index = () => {
       ...prev,
       [selectedContact.id]: (prev[selectedContact.id] || []).map(msg => {
         if (msg.id === messageId) {
-          const reactions = { ...msg.reactions } || {};
+          const reactions = msg.reactions ? { ...msg.reactions } : {};
           if (!reactions[emoji]) {
             reactions[emoji] = [];
           }
