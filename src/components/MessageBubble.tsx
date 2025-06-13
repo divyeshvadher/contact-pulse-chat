@@ -127,7 +127,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
           {/* Quick Actions */}
           {showActions && (
             <div className={`
-              absolute top-0 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity
+              static top-0 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity
               ${isUser ? '-left-16' : '-right-16'}
             `}>
               <Button

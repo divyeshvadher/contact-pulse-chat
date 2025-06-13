@@ -123,7 +123,7 @@ const ModernChatArea: React.FC<ModernChatAreaProps> = ({
       </div>
 
       {/* Messages Area with enhanced styling */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-transparent to-white/20 dark:to-black/20">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-transparent to-white/20 dark:to-black/20 custom-scrollbar">
         {messages.map((message) => (
           <MessageBubble 
             key={message.id} 

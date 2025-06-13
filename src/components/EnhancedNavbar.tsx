@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { Menu, Search, Settings, MoreVertical, Sun, Moon, Bell, Zap } from 'lucide-react';
+import React, { useState } from 'react';
+import { Menu, Search, Settings, Sun, Moon, Bell, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -11,6 +11,12 @@ interface EnhancedNavbarProps {
 
 const EnhancedNavbar: React.FC<EnhancedNavbarProps> = ({ onToggleSidebar, unreadCount = 0 }) => {
   const { theme, toggleTheme } = useTheme();
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [userProfile, setUserProfile] = useState({
+    name: 'Divyesh Vadher',
+    bio: 'Frontend Developer',
+    initials: 'DV'
+  });
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-border/50 h-16 flex items-center px-4 shadow-sm">
@@ -86,11 +92,14 @@ const EnhancedNavbar: React.FC<EnhancedNavbarProps> = ({ onToggleSidebar, unread
         </Button>
         
         <Button 
-          variant="ghost" 
-          size="icon" 
-          className="hover:bg-accent/50 transition-all duration-200 hover:scale-105"
+          variant="ghost"
+          size="icon"
+          onClick={() => setIsProfileModalOpen(true)}
+          className="hover:bg-accent/50 transition-all duration-200 hover:scale-105 relative group"
         >
-          <MoreVertical className="h-5 w-5" />
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-semibold text-sm shadow-md transform transition-all duration-300 group-hover:scale-110">
+            {userProfile.initials}
+          </div>
         </Button>
       </div>
     </div>

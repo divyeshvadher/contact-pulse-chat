@@ -1,7 +1,5 @@
-
 import React, { useState, useMemo } from 'react';
-import { Archive, Pin, MoreVertical } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Archive, Pin } from 'lucide-react';
 import { Contact } from '../types/chat';
 import ContactItem from './ContactItem';
 import SearchBar from './SearchBar';
@@ -58,45 +56,40 @@ const Sidebar: React.FC<SidebarProps> = ({
         className={`
           fixed md:relative top-16 left-0 h-[calc(100vh-4rem)] bg-card border-r border-border z-40
           transition-all duration-300 ease-in-out
-          ${collapsed
-            ? '-translate-x-full md:w-0'
-            : 'translate-x-0 w-80 md:w-80'
-          }
+          ${collapsed ? '-translate-x-full md:w-0' : 'translate-x-0 w-80 md:w-80'}
           ${isMobile ? 'shadow-xl' : ''}
         `}
       >
         <div className="flex flex-col h-full">
           {/* All content is now collapsible */}
           <div
-            className={`flex-1 transition-all duration-300 ease-in-out overflow-hidden ${collapsed ? 'opacity-0 pointer-events-none' : 'opacity-100'
-              }`}
+            className={`flex-1 transition-all duration-300 ease-in-out overflow-hidden ${
+              collapsed ? 'opacity-0 pointer-events-none' : 'opacity-100'
+            }`}
           >
             {/* Header + Filter Buttons */}
             <div className="p-4 border-b border-border">
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-lg font-semibold text-foreground">Chats</h2>
-                <Button variant="ghost" size="icon" className="hover:bg-accent">
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
-              </div>
+              <h2 className="text-lg font-semibold text-foreground mb-3">Chats</h2>
 
               <div className="flex gap-2 text-xs">
                 <button
                   onClick={() => setShowArchived(false)}
-                  className={`px-3 py-1 rounded-full transition-colors ${!showArchived
+                  className={`px-3 py-1 rounded-full transition-colors ${
+                    !showArchived
                       ? 'bg-primary text-primary-foreground'
                       : 'bg-accent text-accent-foreground hover:bg-accent/80'
-                    }`}
+                  }`}
                 >
                   All ({contacts.filter(c => !c.isArchived).length})
                 </button>
                 {archivedCount > 0 && (
                   <button
                     onClick={() => setShowArchived(true)}
-                    className={`flex items-center gap-1 px-3 py-1 rounded-full transition-colors ${showArchived
+                    className={`flex items-center gap-1 px-3 py-1 rounded-full transition-colors ${
+                      showArchived
                         ? 'bg-primary text-primary-foreground'
                         : 'bg-accent text-accent-foreground hover:bg-accent/80'
-                      }`}
+                    }`}
                   >
                     <Archive className="h-3 w-3" />
                     Archived ({archivedCount})
@@ -104,6 +97,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 )}
               </div>
             </div>
+
             <SearchBar
               value={searchTerm}
               onChange={setSearchTerm}
@@ -119,7 +113,8 @@ const Sidebar: React.FC<SidebarProps> = ({
               </div>
             )}
 
-            <div className="h-full overflow-y-auto">
+            {/* Scrollable Contact List with Padding at Bottom */}
+            <div className="h-full overflow-y-auto custom-scrollbar pb-6">
               {filteredContacts.map(contact => (
                 <ContactItem
                   key={contact.id}
@@ -135,8 +130,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                     {searchTerm
                       ? 'No chats found'
                       : showArchived
-                        ? 'No archived chats'
-                        : 'No chats yet'}
+                      ? 'No archived chats'
+                      : 'No chats yet'}
                   </div>
                 </div>
               )}
