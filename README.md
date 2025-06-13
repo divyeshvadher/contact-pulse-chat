@@ -12,7 +12,8 @@ A modern, responsive chat interface built with **Next.js** and **Tailwind CSS**,
 
 ## ✨ Features Implemented
 
-- ✅ Responsive layout for both desktop and mobile views  
+- ✅ Responsive layout for both desktop and mobile views
+- ✅ Light and Dark theme toggle using manual switch
 - ✅ Sidebar with:
   - Contact list
   - Search functionality
