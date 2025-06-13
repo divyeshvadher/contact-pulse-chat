@@ -42,7 +42,7 @@ A modern, responsive chat interface built with **Next.js** and **Tailwind CSS**,
 
 | Desktop View | Mobile View |
 |--------------|-------------|
-| ![Desktop Screenshot](./screenshots/desktop.png) | ![Mobile Screenshot](./screenshots/mobile.png) |
+| ![Desktop Screenshot](./screenshots/desktop.png) | ![Mobile Screenshot](./screenshots/mobile.jpg) |
 
 ---
 
