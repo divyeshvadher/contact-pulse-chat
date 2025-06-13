@@ -1,6 +1,6 @@
 # 💬 ChatApp - Frontend Assignment
 
-A modern, responsive chat interface built with **Next.js** and **Tailwind CSS**, designed as part of a frontend assignment. This app mimics the look and feel of popular messaging apps like WhatsApp and Messenger, with real-time-like UX behaviours and clean UI design.
+A modern, responsive chat interface built with **React** and **Tailwind CSS**, designed as part of a frontend assignment. This app mimics the look and feel of popular messaging apps like WhatsApp and Messenger, with real-time-like UX behaviours and clean UI design.
 
 ---
 
@@ -31,7 +31,7 @@ A modern, responsive chat interface built with **Next.js** and **Tailwind CSS**,
 
 ## 🛠️ Tech Stack
 
-- **Next.js** (App Router)
+- **React 18**
 - **TypeScript**
 - **Tailwind CSS**
 - **Lucide Icons**
