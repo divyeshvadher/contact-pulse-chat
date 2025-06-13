@@ -40,13 +40,19 @@ const ModernChatArea: React.FC<ModernChatAreaProps> = ({
   }, [messages]);
 
   useEffect(() => {
-    // Simulate typing indicator for bot
-    if (messages.length > 0 && messages[messages.length - 1].sender === 'user') {
-      setIsTyping(true);
-      const timer = setTimeout(() => {
-        setIsTyping(false);
-      }, 2000 + Math.random() * 3000);
-      return () => clearTimeout(timer);
+    // Only show typing indicator after user sends a message and before bot responds
+    if (messages.length > 0) {
+      const lastMessage = messages[messages.length - 1];
+      const secondLastMessage = messages.length > 1 ? messages[messages.length - 2] : null;
+      
+      // Show typing when last message is from user and there's no immediate bot response
+        setIsTyping(true);
+        const timer = setTimeout(() => {
+          setIsTyping(false);
+        }, 2000 + Math.random() * 3000);
+        return () => clearTimeout(timer);
+    } else {
+      setIsTyping(false);
     }
   }, [messages]);
 
