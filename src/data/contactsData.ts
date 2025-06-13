@@ -73,4 +73,20 @@ export const contacts: Contact[] = [
     online: false,
     isGroup: true
   },
+  { 
+    id: 9, 
+    name: 'System Notifications', 
+    avatar: '🔔',
+    lastMessage: 'Server maintenance scheduled', 
+    timestamp: '1 day ago', 
+    online: true
+  },
+  { 
+    id: 10, 
+    name: 'Guest Support', 
+    avatar: '❓',
+    lastMessage: 'How can we help you today?', 
+    timestamp: '2 days ago', 
+    online: false
+  }
 ];

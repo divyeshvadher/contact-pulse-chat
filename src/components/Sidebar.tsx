@@ -55,15 +55,14 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div
         className={`
           fixed md:relative top-16 left-0 h-[calc(100vh-4rem)] bg-card border-r border-border z-40
-          transition-all duration-300 ease-in-out
+          transition-all duration-300 ease-in-out flex flex-col
           ${collapsed ? '-translate-x-full md:w-0' : 'translate-x-0 w-80 md:w-80'}
           ${isMobile ? 'shadow-xl' : ''}
         `}
       >
-        <div className="flex flex-col h-full">
-          {/* All content is now collapsible */}
-          <div
-            className={`flex-1 transition-all duration-300 ease-in-out overflow-hidden ${
+        {/* All content is now collapsible */}
+        <div
+          className={`flex flex-col h-full transition-all duration-300 ease-in-out ${
               collapsed ? 'opacity-0 pointer-events-none' : 'opacity-100'
             }`}
           >
@@ -114,7 +113,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             )}
 
             {/* Scrollable Contact List with Padding at Bottom */}
-            <div className="h-full overflow-y-auto custom-scrollbar pb-6">
+            <div className="flex-1 overflow-y-auto custom-scrollbar pb-6">
               {filteredContacts.map(contact => (
                 <ContactItem
                   key={contact.id}
@@ -138,7 +137,6 @@ const Sidebar: React.FC<SidebarProps> = ({
             </div>
           </div>
         </div>
-      </div>
     </>
   );
 };
